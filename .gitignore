@@ -24,7 +24,11 @@ hs_err_pid*
 # Eclipse
 *.project
 *.classpath
+.metadata/
 
 # IDEA
 *.idea
 *.iml
+.idea/
+
+target/
