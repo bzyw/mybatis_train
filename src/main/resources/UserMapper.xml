@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.bzyw.dao.UserDao">
+    <resultMap id="userInfo" type="user">
+        <id property="id" column="id"></id>
+        <result property="name" column="t_name"></result>
+        <result property="age" column="t_age"></result>
+        <result property="gender" column="t_gender"></result>
+        <association property="address" javaType="address">
+            <result property="country" column="t_country"></result>
+            <result property="detail" column="t_detail"></result>
+        </association>
+        <collection property="takes" javaType="arraylist" ofType="take">
+            <result property="credit" column="t_credit"></result>
+            <result property="date" column="t_date"></result>
+        </collection>
+        <discriminator javaType="string" column="t_gender">
+            <case value="m" resultType="male">
+                <collection property="examinations" javaType="arraylist" ofType="maleExamination">
+                    <result property="date" column="m_date"></result>
+                    <result property="prostate" column="t_prostate"></result>
+                </collection>
+            </case>
+            <case value="f" resultType="female">
+                <collection property="examinations" javaType="arraylist" ofType="femaleExamination">
+                    <result property="date" column="m_date"></result>
+                    <result property="womb" column="t_womb"></result>
+                </collection>
+            </case>
+        </discriminator >
+    </resultMap>
+
+    <!--
+    <resultMap id="userInfo" type="user">
+        <id property="id" column="id"></id>
+        <result property="name" column="t_name"></result>
+        <result property="age" column="t_age"></result>
+        <result property="gender" column="t_gender"></result>
+        <association property="address" javaType="address">
+            <result property="country" column="t_country"></result>
+            <result property="detail" column="t_detail"></result>
+        </association>
+        <collection property="takes" javaType="arraylist" ofType="take">
+            <result property="credit" column="t_credit"></result>
+            <result property="date" column="t_date"></result>
+        </collection>
+        <discriminator javaType="string" column="t_gender">
+            <case value="m" resultType="male" resultMap="maleInfo">
+            </case>
+            <case value="f" resultType="female" resultMap="femaleInfo">
+            </case>
+        </discriminator >
+    </resultMap>
+    <resultMap id="maleInfo" type="male" extends="userInfo">
+        <collection property="examinations" javaType="arraylist" ofType="maleExamination">
+            <result property="date" column="m_date"></result>
+            <result property="prostate" column="t_prostate"></result>
+        </collection>
+    </resultMap>
+    <resultMap id="femaleInfo" type="female" extends="userInfo">
+        <collection property="examinations" javaType="arraylist" ofType="femaleExamination">
+            <result property="date" column="m_date"></result>
+            <result property="womb" column="t_womb"></result>
+        </collection>
+    </resultMap>
+    -->
+
+
+    <sql id="userColumns">
+        u.id,u.t_name,u.t_gender,u.t_age,a.t_country,a.t_detail,t.t_credit,t.t_date
+    </sql>
+    <sql id="conmonCondition">
+        FROM t_user u
+        JOIN t_address a ON u.address_id = a.id
+        JOIN t_takes t ON t.user_id = u.id
+    </sql>
+    <select id="queryMale" resultMap="userInfo" parameterType="long">
+        SELECT <include refid="userColumns"/>,m.t_date m_date,m.t_prostate
+        <include refid="conmonCondition"/>
+        JOIN t_male_physical_examination m ON m.user_id = u.id
+        AND u.id = #{id}
+    </select>
+    <select id="queryFemale" resultMap="userInfo" parameterType="long">
+        SELECT <include refid="userColumns"/>,m.t_date m_date,m.t_womb
+        <include refid="conmonCondition"/>
+        JOIN t_female_physical_examination m ON m.user_id = u.id
+        AND u.id = #{id}
+    </select>
+    <!--
+    <select id="test" resultType="user" parameterType="long">
+        select id,t_name name,t_gender gender,t_age age from t_user where id=#{id}
+    </select>
+    -->
+    <select id="queryUser" resultType="user">
+        select id,t_name name,t_gender gender,t_age age
+        from t_user
+        <where>
+            <if test="name!=null">
+                t_name like '%${name}%'
+            </if>
+            <if test="gender!=null">
+                and t_gender=#{gender}
+            </if>
+        </where>
+
+    </select>
+</mapper>
