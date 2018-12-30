@@ -3,6 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.bzyw.dao.UserDao">
+    <cache></cache>
     <resultMap id="userInfo" type="user">
         <id property="id" column="id"></id>
         <result property="name" column="t_name"></result>
@@ -29,7 +30,7 @@
                     <result property="womb" column="t_womb"></result>
                 </collection>
             </case>
-        </discriminator >
+        </discriminator>
     </resultMap>
 
     <!--
@@ -77,13 +78,13 @@
         JOIN t_takes t ON t.user_id = u.id
     </sql>
     <select id="queryMale" resultMap="userInfo" parameterType="long">
-        SELECT <include refid="userColumns"/>,m.t_date m_date,m.t_prostate
+        SELECT<include refid="userColumns"/>,m.t_date m_date,m.t_prostate
         <include refid="conmonCondition"/>
         JOIN t_male_physical_examination m ON m.user_id = u.id
         AND u.id = #{id}
     </select>
     <select id="queryFemale" resultMap="userInfo" parameterType="long">
-        SELECT <include refid="userColumns"/>,m.t_date m_date,m.t_womb
+        SELECT<include refid="userColumns"/>,m.t_date m_date,m.t_womb
         <include refid="conmonCondition"/>
         JOIN t_female_physical_examination m ON m.user_id = u.id
         AND u.id = #{id}
@@ -96,6 +97,7 @@
     <select id="queryUser" resultType="user">
         select id,t_name name,t_gender gender,t_age age
         from t_user
+        <!--
         <where>
             <if test="name!=null">
                 t_name like '%${name}%'
@@ -104,6 +106,45 @@
                 and t_gender=#{gender}
             </if>
         </where>
+        -->
+        <trim prefix="where" prefixOverrides="and |or ">
+            <if test="name!=null">
+                t_name like '%${name}%'
+            </if>
+            <if test="gender!=null">
+                and t_gender=#{gender}
+            </if>
+        </trim>
+    </select>
 
+    <!--函数调用-->
+    <select id="sumFunction" resultType="string" statementType="CALLABLE">
+        select my_sum(
+        #{num1},
+        #{num2},
+        #{date,}
+        )
+        <!--
+            #{num1,mode=IN,jdbcType=INTEGER},
+            #{num2,mode=IN,jdbcType=INTEGER},
+            #{date,mode=IN,jdbcType=TIMESTAMP}
+        -->
+    </select>
+    <!--存储过程调用-->
+    <select id="addCredit"  parameterType="map" statementType="CALLABLE" useCache="false">
+        call add_credit(
+        #{map.userId,mode=IN,jdbcType=BIGINT},
+        #{map.credit,mode=IN,jdbcType=SMALLINT},
+        #{map.date,mode=IN,jdbcType=DATE},
+        #{map.result,mode=OUT,jdbcType=VARCHAR}
+        )
+        <!--
+        call add_credit(
+        #{userId,mode=IN,jdbcType=BIGINT},
+        #{credit,mode=IN,jdbcType=SMALLINT},
+        #{date,mode=IN,jdbcType=DATE},
+        #{result,mode=OUT,jdbcType=VARCHAR}
+        )
+        -->
     </select>
 </mapper>

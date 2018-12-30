@@ -2,13 +2,16 @@ package org.bzyw.model;
 
 import org.apache.ibatis.type.Alias;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by bzyw on 2018/7/14.
  */
 @Alias("user")
-public class User {
+public class User implements Serializable {
+
+    private static final long serialVersionUID = -2455333813004744530L;
     private long id;
     private String name;
     private int age;

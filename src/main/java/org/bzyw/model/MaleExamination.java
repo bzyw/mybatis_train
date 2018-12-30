@@ -2,10 +2,12 @@ package org.bzyw.model;
 
 import org.apache.ibatis.type.Alias;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Alias("maleExamination")
-public class MaleExamination {
+public class MaleExamination implements Serializable {
+    private static final long serialVersionUID = 2617287709578756076L;
     private int id;
     private Date date;
     private String prostate;

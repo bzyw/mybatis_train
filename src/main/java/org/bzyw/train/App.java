@@ -18,7 +18,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Hello world!
@@ -35,15 +38,19 @@ public class App {
         SqlSession session = sqlSessionFactory.openSession();
         try {
             UserDao dao = session.getMapper(UserDao.class);
+            System.out.println("--------------------------test----------------------------");
             User user = dao.test(1L);
             System.out.println(user.getId() + "," + user.getName() + "," + user.getAge() + "," + user.getGender());
 
+            System.out.println("--------------------------queryMale----------------------------");
             Male user1 = dao.queryMale(1L);
             System.out.println(user1.getId() + ","
                     + user1.getName() + "," + user1.getGender() +
                     "," + user1.getAge() + "," + user1.getAddress().getCountry()
                     + "," + user1.getAddress().getDetail() + ","
                     + user1.getTakes().size() + "," + user1.getExaminations().size());
+
+            System.out.println("--------------------------queryFemale----------------------------");
             Female user2 = dao.queryFemale(2L);
             System.out.println(user2.getId() + ","
                     + user2.getName() + "," + user2.getGender() +
@@ -51,11 +58,28 @@ public class App {
                     + "," + user2.getAddress().getDetail() + ","
                     + user2.getTakes().size() + "," + user2.getExaminations().size());
 
+            System.out.println("--------------------------queryUser----------------------------");
             List<User> user3 = dao.queryUser(null, "m");
             System.out.println(user3.get(0).getId() + ","
                     + user3.get(0).getName() + "," + user3.get(0).getGender() +
                     "," + user3.get(0).getAge());
 
+            System.out.println("--------------------------sumFunction----------------------------");
+            System.out.println(dao.sumFunction(1, 2, new Date()));
+
+            System.out.println("--------------------------addCredit----------------------------");
+            Map<String, Object> map = new HashMap<>();
+            map.put("userId", 1);
+            map.put("credit", 1);
+            map.put("date", new Date());
+            map.put("result", null);
+            dao.addCredit(map);
+            System.out.println(map.get("result"));
+            /*
+            String result = null;
+            dao.addCredit(1,(short)1,new Date(),result);
+            System.out.println(result);
+            */
         } finally {
             session.close();
         }
