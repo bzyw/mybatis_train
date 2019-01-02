@@ -28,6 +28,11 @@ public interface UserDao {
 
     //获取不到OUT值
     //public void addCredit(@Param("userId") long userId, @Param("credit") short credit, @Param("date") Date date, @Param("result") String result);
-    public void addCredit(@Param("map")Map<String,Object> map);
+    public void addCredit(@Param("map") Map<String, Object> map);
 
+
+    public List<User> queryUserList(@Param("names") List<String> nameList);
+
+
+    public void addUser(@Param("users") List<User> users);
 }

@@ -16,8 +16,19 @@ public class User implements Serializable {
     private String name;
     private int age;
     private String gender;
+    private long addressId;
     private Address address;
     private List<Take> takes;
+
+    public User() {
+    }
+
+    public User(String name, int age, String gender, long addressId) {
+        this.name = name;
+        this.age = age;
+        this.gender = gender;
+        this.addressId = addressId;
+    }
 
     public long getId() {
         return id;
@@ -65,5 +76,13 @@ public class User implements Serializable {
 
     public void setTakes(List<Take> takes) {
         this.takes = takes;
+    }
+
+    public long getAddressId() {
+        return addressId;
+    }
+
+    public void setAddressId(long addressId) {
+        this.addressId = addressId;
     }
 }

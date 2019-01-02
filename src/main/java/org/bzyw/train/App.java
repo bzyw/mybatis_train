@@ -18,10 +18,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Hello world!
@@ -75,6 +72,25 @@ public class App {
             map.put("result", null);
             dao.addCredit(map);
             System.out.println(map.get("result"));
+
+            System.out.println("---------------------------foreach-----------------------------------");
+            List<String> names = new ArrayList<>();
+            names.add("bzyw");
+            names.add("Sherley");
+            List<User> users = dao.queryUserList(names);
+            System.out.println(users.size());
+
+
+            System.out.println("--------------------------addusers--------------------------------");
+            /*
+            List<User> userList1 = new ArrayList<>();
+            userList1.add(new User("liuliu", 27, "f", 1));
+            userList1.add(new User("yuziyong", 28, "m", 1));
+            userList1.add(new User("bzyw1", 26, "m", 1));
+            dao.addUser(userList1);
+            */
+
+            session.commit();
             /*
             String result = null;
             dao.addCredit(1,(short)1,new Date(),result);
